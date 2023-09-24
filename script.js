@@ -1,72 +1,49 @@
-function printComputerChoice(computerChoice) {
-  if (computerChoice === 0) {
-    console.log("The Computer chose Rock!");
-  } else if (computerChoice === 1) {
-    console.log("The Computer chose Paper!");
-  } else if (computerChoice === 2) {
-    console.log("The computer chose Scissors!");
-  }
-}
+const options = ['rock', 'paper', 'scissors'];
 
-function printPlayerSelection(playerSelection) {
-  if (playerSelection.toLowerCase() === "rock") {
-    console.log("You chose Rock!");
-  } else if (playerSelection.toLowerCase() === "paper") {
-    console.log("You chose Paper!");
-  } else if (playerSelection.toLowerCase() === "scissors") {
-    console.log("You chose Scissors!");
-  } else {
-    console.log("Please choose between Rock, Paper, or Scissors");
-  }
-}
+const container = document.getElementById('container')
+const div = document.querySelector('#button-container')
+const buttons = document.querySelectorAll('button');
+
+const para = document.createElement('p');
+const nextRoundButton = document.createElement('button')
 
 let playerScore = 0;
 let computerScore = 0;
 
-function gameStart(computerChoice, playerSelection) {
-  if (computerChoice === 0 && playerSelection === "rock") {
-    console.log("Draw...");
-  } else if (computerChoice === 0 && playerSelection === "paper") {
-    console.log("You win! Paper beats Rock.");
-    return (playerScore)++;
-  } else if (computerChoice === 0 && playerSelection === "scissors") {
-    console.log("You lose... Rock beats Scissors.");
-    return (computerScore)++;
-  } else if (computerChoice === 1 && playerSelection === "rock") {
-    console.log("You lose... Paper beats Rock.");
-    return (computerScore)++;
-  } else if (computerChoice === 1 && playerSelection === "paper") {
-    console.log("Draw...");
-  } else if (computerChoice === 1 && playerSelection === "scissors") {
-    console.log("You win! Scissors beats Paper.");
-    return (playerScore)++;
-  } else if (computerChoice === 2 && playerSelection === "rock") {
-    console.log("You win! Rock beats Scissors.");
-    return (playerScore)++;
-  } else if (computerChoice === 2 && playerSelection === "paper") {
-    console.log("You lose... Scissors beats Paper.");
-    return (computerScore)++;
-  } else if (computerChoice === 2 && playerSelection === "scissors") {
-    console.log("Draw...")
+function gameStart(e) {
+  let random = Math.floor(Math.random() * 3);
+  let computerChoice = options[random];
+  container.removeChild(div);
+  if (e.target.id === computerChoice) {
+    container.appendChild(para).textContent = `its a draw`;
+    container.appendChild(nextRoundButton).textContent = 'play again';
+  } else if ((e.target.id === 'rock' && computerChoice === 'scissors') || 
+  (e.target.id === 'paper' && computerChoice === 'rock') || 
+  (e.target.id === 'scissors' && computerChoice === 'paper')) {
+    playerScore++;
+    container.appendChild(para).textContent = `you win, your score is ${playerScore}`;
+    container.appendChild(nextRoundButton).textContent = 'play again';
+    if (playerScore === 5) {
+      container.appendChild(para).textContent = `match over, your score: ${playerScore} | computer score: ${computerScore}`;
+      container.appendChild(nextRoundButton);
+    }
+  } else if ((computerChoice === 'rock' && e.target.id === 'scissors') || 
+  (computerChoice === 'paper' && e.target.id === 'rock') || 
+  (computerChoice === 'scissors' && e.target.id === 'paper')) {
+    computerScore++;
+    container.appendChild(para).textContent = `you lose, computer score is ${computerScore}`;
+    container.appendChild(nextRoundButton).textContent = 'play again';
+    if (computerScore === 5) {
+      container.appendChild(para).textContent = `match over, your score: ${playerScore} | computer score: ${computerScore}`;
+      container.appendChild(nextRoundButton);
+    }
   }
 }
 
-function winCondition(playerScore, computerScore) {
-  if (playerScore === 5) {
-    console.log("You won the match!");
-  } else if (computerScore === 5) {
-    console.log("You lost the match...");
-  }
-}
+buttons.forEach(item => item.addEventListener('click', gameStart));
 
-do {
-  let computerChoice = Math.floor(Math.random() * 3);
-  let playerSelection = prompt("Pick your poison:").toLowerCase();
-  printComputerChoice(computerChoice);
-  printPlayerSelection(playerSelection);
-  gameStart(computerChoice, playerSelection);
-  console.log(`You: ${playerScore} | PC: ${computerScore}`);
-  winCondition(playerScore, computerScore);
-}
-  while (playerScore < 5 && computerScore < 5);
-
+nextRoundButton.addEventListener('click', () => {
+  container.removeChild(para);
+  container.removeChild(nextRoundButton);
+  container.appendChild(div);
+})
